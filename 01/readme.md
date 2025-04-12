@@ -4,8 +4,8 @@
 
 To compile the program run 'make' in cmd
 
-The executable is named 'main'. To cpecify size of needed square, input the size as a command line argument. 
-For examle './main 50' will calculate area of a square 50x50 in size.
+The executable is named 'main'. To cpecify size of needed square, input the size as a command line argument.
+For example './main 50' will calculate area of a square 50x50 in size.
 
 
 ## Result examples
