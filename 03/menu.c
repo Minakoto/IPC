@@ -34,7 +34,7 @@ int main() {
         if(scanf("%hhd", &big_cmd))
             head = menu_l1(head, &current, big_cmd);
     }
-    fd = open("input.txt", O_CREAT, O_WRONLY, O_TRUNC);
+    fd = open("input.txt", O_CREAT|O_WRONLY|O_TRUNC, 0777);
     WriteElem(fd, current, head);
     close(fd);
     return 0;
