@@ -18,7 +18,8 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
     pid_t pid;
-    pipe(fd);
+    if(pipe(fd) == -1) exit(EXIT_FAILURE);
+    
     switch(pid = fork()) {
         case -1:
             perror("fork");
