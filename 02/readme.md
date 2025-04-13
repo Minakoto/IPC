@@ -12,22 +12,30 @@
 
 To compile the program run 'make' in cmd
 
-For work follow menu on screen. All entries' first/last names, city, job position and email will be documented in 'input.txt'.
-During following executions theese entries are read from the file.
+All available for execution functions are in 'exec' directory and are the first line of output.
 
-## Execution examples
+Numbers of parameners needed for proper executions of funcitons:
+'func' 'num_pars' 'arg1' 'arg2' '...'
 
-MENU: 
-1. Initiate entry
-2. Edit entry
-3. Delete entry
-4. View phonebook
-5. List IDs
-6. Exit
-Input command: 4
+'max {min} 2 a1 a2'
+'rnd {min} 1'
+'square 1 a1'
+'sum {min} 2 a1 a2'
 
-ID   |First name          |Last name           |Address             |Job                 |Contacts            |
------|--------------------|--------------------|--------------------|--------------------|--------------------|
-0    |John                |Start               |Detroit             |SalaryPat           |What@what.what      |
-1    |Hoo                 |woo                 |Novos               |Goog                |goog@goog.com       |
+## Result examples
+
+IN: 'sum 2 1 5'
+OUT: 'Sum: 6.000'
+
+IN: 'max 4 50 2 -1 20'
+OUT: 'Max: 50.000'
+
+IN: 'max 4 50 2 -1 20'
+OUT: 'Max: 50.000'
+
+IN: 'rnd 1 50'
+OUT: 'Random number, enjoy):26'
+
+IN: 'square 1 625'
+OUT: '390625.000'
 
