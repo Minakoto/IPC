@@ -11,8 +11,9 @@ int main(int argc, char *argv[]) {
     while(1) {
         // msg_status = msgrcv(queue_id, &msg, sizeof(msg.msgtext), 255, IPC_NOWAIT);
         // if(msg_status != -1) break;
-        msg_status = msgrcv(queue_id, &msg, sizeof(msg.msgtext), 1, 0);
+        msg_status = msgrcv(queue_id, &msg, sizeof(msg.msgtext), 0, 0);
         CHECK(msg_status, perror, -1);
+        if(msg.msgtype == 255) break;
         printf("Recieved Message: %s\n", msg.msgtext);
         printf("Type: ");
         fgets(msg.msgtext, MSG_MAX, stdin);
@@ -21,10 +22,14 @@ int main(int argc, char *argv[]) {
         (strncmp(msg.msgtext, "q", strlen(msg.msgtext)) == 10) ? msg.msgtype = 255 : 0;
         msg_status = msgsnd(queue_id, &msg, sizeof(msg.msgtext), 0);
         CHECK(msg_status, perror, -1);
-        if(msg.msgtype == 255) break;
+        if(msg.msgtype == 255) {
+            msg_status = msgctl(queue_id, IPC_RMID, NULL);
+            CHECK(msg_status, perror, -1);
+            break;
+        }
         msg_status = 0;
     }
-    msg_status = msgctl(queue_id, IPC_RMID, NULL);
-    CHECK(msg_status, perror, -1);
+    // msg_status = msgctl(queue_id, IPC_RMID, NULL);
+    // CHECK(msg_status, perror, -1);
     exit(0);
 }
