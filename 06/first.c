@@ -1,12 +1,14 @@
 #include "head.h"
 
+
 int main(int argc, char *argv[]) {
     key_t chat_key;
-    int queue_id, msg_status;
+    int queue_id, sem_id, msg_status;
     chat_key = ftok("chat", 'C');
     CHECK(chat_key, perror, -1);
     queue_id = msgget(chat_key, 0666|IPC_CREAT);
     CHECK(queue_id,perror, -1);
+    
     struct msgbuf msg;
     while(1) {
         printf("Type: ");
