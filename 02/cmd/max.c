@@ -1,6 +1,7 @@
 #include "head.h"
 
 int main(int argc, char* argv[]) {
+    printf("argc%d", argc);
     if(argc < 2) {
         printf("Wrong input\n");
         exit(EXIT_FAILURE);

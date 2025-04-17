@@ -12,6 +12,8 @@ char handle_error(char);
 int is_empty(char*);
 Entry ReadEntry(int fd, short* cur, int* res);
 void WriteElem(int fd, short cur, List* head);
+
+
 int main() {
     List* head = NULL;
     short current = 0;

@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <time.h>
+#include <fcntl.h>
 
 int main(int argc, char* argv[]) {
     srand(time(NULL));
@@ -37,11 +38,14 @@ int main(int argc, char* argv[]) {
             exit(EXIT_SUCCESS);
         default:
             close(fd[1]);
+            int fl = open("ttt.txt", O_CREAT|O_WRONLY, 0777);
             for(int i = 0; i < num; i++) {
                 read(fd[0], &rnd, sizeof(float));
                 if(i != num - 1) printf("%.3f ", rnd);
                 else printf("%.3f ", rnd);
+                write(fl, &rnd, sizeof(float));
             }
+            close(fl);
     }
 
 }
