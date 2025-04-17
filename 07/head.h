@@ -5,20 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <mqueue.h>
 
-#define MSG_MAX 256
+#define QNAME "/queue"
+#define MSG 32
+#define SIZE 256
 
-struct msgbuf {
-    long msgtype;
-    char msgtext[MSG_MAX];
-};
 
-#define CHECK(item, msg, wrong) ({ if( item == wrong) {\
-msg(#item);\
-exit(EXIT_FAILURE);\
-} })
+#define CHECK(item, msg, text, wrong) ({ if( item == wrong) {\
+    msg(text);\
+    exit(EXIT_FAILURE);\
+    } })
 
 
 #endif
