@@ -15,10 +15,10 @@ struct msgbuf {
     char msgtext[MSG_MAX];
 };
 
-#define CHECK(item, msg, wrong) ({ if( item == wrong) {\
-msg(#item);\
-exit(EXIT_FAILURE);\
-} })
+#define CHECK(item, msg, text, wrong) ({ if( item == wrong) {\
+    msg(text);\
+    exit(EXIT_FAILURE);\
+    } })
 
 
 #endif
