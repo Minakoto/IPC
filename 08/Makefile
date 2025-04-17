@@ -9,5 +9,5 @@ main.o: main.c
 
 clean:
 	rm main
-	rm log.txt
+	rm log*
 	rm ttt.txt
