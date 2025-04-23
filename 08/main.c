@@ -22,9 +22,13 @@ void lock(int id) {
     CHECK(sem_op, perror, "semop", -1);
 }
 void unlock(int id) {
-    struct sembuf op = {0, 1, SEM_UNDO};
-    int sem_op = semop(id, &op, 1);
+    struct sembuf op1 = {0, 0, SEM_UNDO};
+    struct sembuf op2 = {0, 1, SEM_UNDO};
+    int sem_op = semop(id, &op1, 1);
     CHECK(sem_op, perror, "semop", -1);
+    sem_op = semop(id, &op2, 1);
+    CHECK(sem_op, perror, "semop", -1);
+
 }
 
 int main(int argc, char* argv[]) {
@@ -67,7 +71,8 @@ int main(int argc, char* argv[]) {
                 perror("file");
                 exit(EXIT_FAILURE);
             }
-            CHECK(read(llf, buf, sizeof(buf)), perror, "read", -1);
+            // CHECK(lseek(llf, sizeof(float)*i, SEEK_SET), perror, "lseek", -1);
+            CHECK(read(llf, buf, sizeof(float)), perror, "read", -1);
             close(llf);
             unlock(sem_id);
             int log_c = open("logc.txt", O_CREAT|O_WRONLY, 0777);
@@ -88,7 +93,7 @@ int main(int argc, char* argv[]) {
             CHECK(fl, perror, "file open", -1);
             CHECK(read(fd[0], &rnd, sizeof(float)), perror, "read fd", -1);
             if(i != num - 1) printf("%.3f ", rnd);
-            else printf("%.3f ", rnd);
+            else printf("%.3f\n", rnd);
             CHECK(write(fl, &rnd, sizeof(float)), perror, "write", -1);
             close(fl);
             unlock(sem_id);
