@@ -37,7 +37,7 @@ void r_unlock(int id) {
 
 void w_lock(int id) {
     struct sembuf op1[3] = {{0, 0, SEM_UNDO}, {1, 0, SEM_UNDO}, {1, 1, SEM_UNDO}};
-    CHECK(semop(id, op1, 3), perror, "op6", -1);   
+    CHECK(semop(id, op1, 3), perror, "op6", -1);
 }
 void w_unlock(int id) {
     struct sembuf op1 = {1, -1, SEM_UNDO};
@@ -73,67 +73,66 @@ int main(int argc, char* argv[]) {
         printf("Wrong input\n");
         exit(EXIT_FAILURE);
     }
-    switch(pid = fork()) {
-    case -1:
-        perror("fork");
-        exit(EXIT_FAILURE);
-    case 0:
-        close(fd[0]);
-        char buf[256];
-        for(int i = 0; i < num; i++) {
-            rnd = rand() % 5000;
-            CHECK(write(fd[1], &rnd, sizeof(float)), perror, "write", -1);
-
-            r_lock(sem_id);
-            int llf = open("ttt.txt", O_RDWR);
-            if(llf == -1) {
-                perror("file");
-                exit(EXIT_FAILURE);
-            }
-            CHECK(read(llf, buf, sizeof(buf)), perror, "read", -1);
-            close(llf);
-            r_unlock(sem_id);
-            int log_c = open("logc.txt", O_CREAT|O_WRONLY|O_APPEND, 0777);
-            CHECK(log_c, perror, "log open", -1);
-            write(log_c, buf, sizeof(float));
-            write(log_c, "\n", sizeof("\n"));
-            close(log_c);
+    for(int i = 0; i < READER; i++) {
+        switch(pid = fork()) {
+        case -1:
+            perror("fork");
+            exit(EXIT_FAILURE);
+        case 0:
+            close(fd[0]);
+            char buf[256];
+            for(int i = 0; i < num; i++) {
+                rnd = rand() % 5000;
+                CHECK(write(fd[1], &rnd, sizeof(float)), perror, "writefd", -1);
+    
+                r_lock(sem_id);
+                int llf = open("ttt.txt", O_RDWR);
+                if(llf == -1) {
+                    perror("file");
+                    exit(EXIT_FAILURE);
+                }
+                CHECK(read(llf, buf, sizeof(buf)), perror, "read", -1);
+                close(llf);
+                r_unlock(sem_id);
+                int log_c = open("logc.txt", O_CREAT|O_WRONLY|O_APPEND, 0777);
+                CHECK(log_c, perror, "log open", -1);
+                write(log_c, buf, sizeof(float));
+                write(log_c, "\n", sizeof("\n"));
+                close(log_c);
         }
         exit(EXIT_SUCCESS);
-    default:
+        }
+    }
+    
         close(fd[1]);
         int fl;
         int lf = open("log.txt", O_CREAT|O_WRONLY|O_TRUNC, 0777);
         CHECK(lf, perror, "log open", -1);
         close(lf);
         for(int i = 0; i < num; i++) {
-
             w_lock(sem_id);
             fl = open("ttt.txt", O_CREAT|O_WRONLY|O_APPEND, 0777);
             CHECK(fl, perror, "file open", -1);
             CHECK(read(fd[0], &rnd, sizeof(float)), perror, "read fd", -1);
             if(i != num - 1) printf("%.3f ", rnd);
             else printf("%.3f\n", rnd);
-            CHECK(write(fl, &rnd, sizeof(float)), perror, "write", -1);
+            CHECK(write(fl, &rnd, sizeof(float)), perror, "writep", -1);
             close(fl);
             w_unlock(sem_id);
 
             int lf = open("log.txt", O_WRONLY|O_APPEND);
             CHECK(lf, perror, "log open", -1);
             strncpy(msg, "\nParent: OPEN", sizeof(msg));
-            CHECK(write(lf, msg, strlen(msg)), perror, "write", -1);
+            CHECK(write(lf, msg, strlen(msg)), perror, "write5", -1);
 
             snprintf(msg, sizeof(msg), "\nParent: READ %f", rnd);
-            CHECK(write(lf, msg, strlen(msg)), perror, "write", -1);
+            CHECK(write(lf, msg, strlen(msg)), perror, "write6", -1);
 
             strncpy(msg, "\nParent: CLOSE", sizeof(msg));
-            CHECK(write(lf, msg, strlen(msg)), perror, "write", -1);
+            CHECK(write(lf, msg, strlen(msg)), perror, "write7", -1);
             close(lf);
-
         }
         sem_status = semctl(sem_id, 0, IPC_RMID);
         CHECK(sem_status, perror, "semctl", -1);
-    }
-
 }
 
