@@ -90,14 +90,13 @@ int main(int argc, char* argv[]) {
                 perror("file");
                 exit(EXIT_FAILURE);
             }
-            // CHECK(lseek(llf, sizeof(float)*i, SEEK_SET), perror, "lseek", -1);
-            CHECK(read(llf, buf, sizeof(float)), perror, "read", -1);
+            CHECK(read(llf, buf, sizeof(buf)), perror, "read", -1);
             close(llf);
             r_unlock(sem_id);
-
-            int log_c = open("logc.txt", O_CREAT|O_WRONLY, 0777);
+            int log_c = open("logc.txt", O_CREAT|O_WRONLY|O_APPEND, 0777);
             CHECK(log_c, perror, "log open", -1);
-            write(log_c, buf, sizeof(buf));
+            write(log_c, buf, sizeof(float));
+            write(log_c, "\n", sizeof("\n"));
             close(log_c);
         }
         exit(EXIT_SUCCESS);
