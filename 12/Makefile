@@ -1,6 +1,7 @@
 all: main
 	
 main: main.o
+	touch shmfile
 	gcc main.o -o main
 	rm *.o
 
@@ -9,5 +10,4 @@ main.o: main.c
 
 clean:
 	rm main
-	rm log*
-	rm ttt.txt
+	rm shmfile
