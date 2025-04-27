@@ -14,7 +14,6 @@
     exit(EXIT_FAILURE);\
     } })
 
-
 void unlock(sem_t* id) {
     CHECK(sem_post(id), perror, "post", -1);
 
@@ -30,7 +29,6 @@ int main(int argc, char* argv[]) {
     sem_t* sem_id;
     sem_id = sem_open("/mysem", O_CREAT, 0600, 1);
     CHECK(sem_id, perror, "sem init", SEM_FAILED);
-    CHECK(sem_post(sem_id), perror, "initpost", -1);
 
     int fd[2];
     char msg[128];
