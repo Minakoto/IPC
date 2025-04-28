@@ -24,6 +24,7 @@ int sum(int, int);
 int sub(int, int);
 int mult(int, int);
 int divi(int, int);
+void readpars(int socket, int* a, int* b, char* buffer);
 
 
 
@@ -36,7 +37,6 @@ int main(int argc, char *argv[])
     int shm_id = shm_open("/shmget", O_CREAT | O_RDWR, 0666);
     CHECK(shm_id, perror, "get", == -1);
     ftruncate(shm_id, sizeof(int));
-    
     nclients = (int*) mmap(NULL, sizeof(int), PROT_READ|PROT_WRITE, MAP_SHARED, shm_id, 0);
     CHECK(nclients, perror, "Map", == (int*)-1);
 
@@ -72,7 +72,6 @@ int main(int argc, char *argv[])
 	    *nclients+=1;
         printusers();
 
-		
         switch(pid = fork()) {
             case -1:
                 perror("fork");
@@ -116,7 +115,7 @@ int divi(int a, int b) {
 void handle(int socket) {
     char buffer[1024];
     int recieved, a, b, cmd, result;
-    #define MSG_MSG "Command(1 - +, 2 - -, 3 - *, 4 - /)\n"
+    #define MSG_MSG "Command(1 - +, 2 - -, 3 - *, 4 - /,)\n"
     while(1) {
         a = b = cmd = result = 0;
         CHECK(write(socket, MSG_MSG, sizeof(MSG_MSG)), perror, "write msg", == -1);
@@ -127,15 +126,7 @@ void handle(int socket) {
         cmd = atoi(buffer);
         printf("Operation %d\n", cmd);
         if(cmd < 5) {
-            printf("smd%d", cmd);
-            recieved = read(socket, &buffer[0], sizeof(buffer));
-            CHECK(recieved, perror, "read cmd", < 0);
-            a = atoi(buffer);
-            printf("First: %d\n", a);
-            recieved = read(socket, &buffer[0], sizeof(buffer));
-            CHECK(recieved, perror, "read cmd", < 0);
-            b = atoi(buffer);
-            printf("Second: %d\n", b);
+            readpars(socket, &a, &b, buffer);
             switch(cmd) {
                 case 1:
                     result = sum(a, b);
@@ -158,5 +149,16 @@ void handle(int socket) {
         else strcpy(buffer, "Error\n");
         write(socket, &buffer[0], sizeof(buffer));
     }
-
 }
+
+void readpars(int socket, int* a, int* b, char* buffer) {
+    int recieved = read(socket, &buffer[0], sizeof(buffer));
+    CHECK(recieved, perror, "read cmd", < 0);
+    *a = atoi(buffer);
+    printf("First: %d\n", *a);
+    recieved = read(socket, &buffer[0], sizeof(buffer));
+    CHECK(recieved, perror, "read cmd", < 0);
+    *b = atoi(buffer);
+    printf("Second: %d\n", *b);
+}
+
