@@ -25,7 +25,6 @@ void r_lock() {
     sem_wait(r_id);
     *count++;
     if (*count == 1) {
-        // first reader locks the writer
         sem_wait(w_id);
     }
     sem_post(r_id);
@@ -35,7 +34,6 @@ void r_unlock() {
     sem_wait(r_id);
     *count--;
     if (*count == 0) {
-        // last reader unlocks the writer
         sem_post(w_id);
     }
     sem_post(r_id);
